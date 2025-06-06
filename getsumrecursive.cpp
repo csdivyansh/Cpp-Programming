@@ -1,0 +1,32 @@
+#include <iostream>
+using namespace std;
+
+bool ls(int arr[],int size){
+    if (size == 0){
+        return 0;
+    }
+    if (size == 1) {
+        return arr[0];
+    }
+
+    
+}
+
+int getsum(int arr[],int size){
+    if (size == 0){
+        return 0;
+    }
+    if (size == 1) {
+        return arr[0];
+    }
+
+    int sum = arr[0] + getsum(arr + 1, size -1);
+    return sum;
+}
+
+int main() {
+
+    int arr[] = {1,2,3,4,5,6,7,8,9,10};
+
+    cout << getsum(arr,);
+}
