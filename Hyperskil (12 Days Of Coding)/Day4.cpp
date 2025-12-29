@@ -3,89 +3,18 @@ using namespace std;
 
 int main()
 {
-    string fork1 = "";
-    string fork2 = "";
-    string fork3 = "";
-    string fork4 = "";
-
-    int ans = 0;
-    string str;
-    
-    while (getline(cin, str))
+    vector<double> x(10), y(10);
+    char comma;
+    for (int i = 0; i < 10; i++)
     {
-        int count = 0;
-        string person = "";
-        string action = "";
-        int fork = -1;
-        for (int i = 0; i < str.size(); i++)
-        {
-            if (str[i] == ',')
-            {
-                count++;
-                continue;
-            }
-            if (count == 0)
-                person += str[i];
-            else if (count == 1)
-                action += str[i];
-            else
-                fork = str[i] - '0';
-        }
-
-        if (action == "pick")
-        {
-            if (fork == 1)
-            {
-                if(fork1 == "") {
-                    fork1 = person;
-                } else {
-                    ans++;
-                }
-            }
-            if (fork == 2)
-            {
-                if (fork2 == "")
-                {
-                    fork2 = person;
-                }
-                else
-                {
-                    ans++;
-                }
-            }
-            if (fork == 3)
-            {
-                if (fork3 == "")
-                {
-                    fork3 = person;
-                }
-                else
-                {
-                    ans++;
-                }
-            }
-            if (fork == 4)
-            {
-                if (fork4 == "")
-                {
-                    fork4 = person;
-                }
-                else
-                {
-                    ans++;
-                }
-            }
-        } else if(action == "release") {
-            if(fork == 1)
-                fork1 = "";
-            else if (fork == 2)
-                fork2 = "";
-            else if (fork == 3)
-                fork3 = "";
-            else if (fork == 4)
-                fork4 = "";
-        }
+        cin >> x[i] >> comma >> y[i];
     }
-    cout << ans << endl;
+    double area = 0.0;
+    for (int i = 0; i < 10; i++)
+    {
+        int j = (i + 1) % 10;
+        area += (x[i] * y[j]) - (x[j] * y[i]);
+    }
+    cout << fixed << setprecision(2) << abs(area) / 2.0 << endl;
     return 0;
 }
