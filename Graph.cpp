@@ -19,12 +19,12 @@ public:
         this->V = V;
         this->E = E;
     }
-    void addEdge(T u, T v, bool isdirected)
+    void addEdge(T u, T v, bool isDirected)
     {
         // create an edge from u to v;
         adj[u].push_back(v);
 
-        if (!isdirected)
+        if (!isDirected)
         {
             adj[v].push_back(u);
         }
@@ -195,6 +195,45 @@ public:
         }
         cout << "Has Cycle (DFS): " << cycle << endl;
     }
+    bool directed_cyclic_dfs(T node, unordered_map<T, bool> &vis, unordered_map<T, bool> &dfsVis)
+    {
+        vis[node] = true;
+        dfsVis[node] = true;
+
+        for (T &nbr : adj[node])
+        {
+            if (!vis[nbr])
+            {
+                if (directed_cyclic_dfs(nbr, vis, dfsVis))
+                {
+                    return true;
+                }
+            }
+            else if (dfsVis[nbr] && vis[nbr])
+                return true;
+        }
+
+        dfsVis[node] = false;
+        return false;
+    }
+    void directed_cyclic_check()
+    {
+        unordered_map<T, bool> vis;
+        unordered_map<T, bool> dfsVis;
+
+        for (T i = 0; i < V; i++)
+        {
+            if (!vis[i])
+            {
+                if (directed_cyclic_dfs(i, vis, dfsVis))
+                {
+                    cout << "Has Cycle : Yes(Directed Graph)" << endl;
+                    return;
+                }
+            }
+        }
+        cout << "Has Cycle : No (Directed Graph)" << endl;
+    }
 };
 
 int main()
@@ -206,6 +245,9 @@ int main()
     int m;
     cout << "Enter the number of edges : " << endl;
     cin >> m;
+    bool isDirected;
+    cout << "Enter 1 for directed: " << endl;
+    cin >> isDirected;
 
     Graph<int> g(n, m);
     cout << "Enter the edges pairs: " << endl;
@@ -214,20 +256,22 @@ int main()
     {
         int u, v;
         cin >> u >> v;
-        g.addEdge(u, v, 0);
+        g.addEdge(u, v, isDirected);
     }
-    cout << endl;
-    cout << "Adjacency List ->" << endl;
-    g.printAdjList();
-    cout << endl;
-    cout << "BFS Traversal ->" << endl;
-    g.bfs();
-    cout << endl;
-    cout << "DFS Traversal ->" << endl;
-    g.dfs();
-    g.detect_cycle_bfs();
-    g.detect_cycle_dfs();
-    cout << endl;
+    // cout << endl;
+    // cout << "Adjacency List ->" << endl;
+    // g.printAdjList();
+    // cout << endl;
+    // cout << "BFS Traversal ->" << endl;
+    // g.bfs();
+    // cout << endl;
+    // cout << "DFS Traversal ->" << endl;
+    // g.dfs();
+    // g.detect_cycle_bfs();
+    // g.detect_cycle_dfs();
+    // cout << endl;
+
+    g.directed_cyclic_check();
 
     /*
     Enter the number of nodes :
