@@ -11,7 +11,6 @@ class Graph
 {
 private:
     T V, E;
-
     map<T, list<T>> adj;
 
 public:
@@ -48,31 +47,31 @@ public:
     void bfs()
     {
         unordered_map<T, bool> visited;
-        vector<T> ans;
-        queue<T> q;
-        q.push(0);
-        visited[0] = true;
 
-        while (!q.empty())
+        for (T start = 0; start < V; start++)
         {
-            T front = q.front();
-            q.pop();
+            if (visited[start])
+                continue;
 
-            ans.push_back(front);
+            queue<T> q;
+            q.push(start);
+            visited[start] = true;
 
-            for (auto &i : adj[front])
+            while (!q.empty())
             {
-                if (!visited[i])
+                T front = q.front();
+                q.pop();
+                cout << front << " ";
+
+                for (auto &i : adj[front])
                 {
-                    q.push(i);
-                    visited[i] = true;
+                    if (!visited[i])
+                    {
+                        visited[i] = true;
+                        q.push(i);
+                    }
                 }
             }
-        }
-
-        for (T &i : ans)
-        {
-            cout << i << " ";
         }
         cout << endl;
     }
@@ -104,7 +103,7 @@ public:
         int count = 1;
         for (auto &c : ans)
         {
-            cout << "Component : " << count << " -> " << endl;
+            cout << "Component " << count << " -> " << endl;
             count++;
             for (auto &i : c)
             {
@@ -113,11 +112,93 @@ public:
             cout << endl;
         }
     }
+    bool isCyclicBFS(unordered_map<T, bool> &vis, T src)
+    {
+        unordered_map<T, T> parent;
+        queue<T> q;
+        parent[src] = src;
+        vis[src] = 1;
+        q.push(src);
+
+        while (!q.empty())
+        {
+            T front = q.front();
+            q.pop();
+
+            for (T &nbr : adj[front])
+            {
+                if (vis[nbr] && parent[front] != nbr)
+                {
+                    return true;
+                }
+                else if (!vis[nbr])
+                {
+                    vis[nbr] = 1;
+                    parent[nbr] = front;
+                    q.push(nbr);
+                }
+            }
+        }
+        return false;
+    }
+    void detect_cycle_bfs()
+    {
+        unordered_map<T, bool> vis;
+        string cycle = "No";
+        for (T i = 0; i < V; i++)
+        {
+            if (!vis[i])
+            {
+                if (isCyclicBFS(vis, i))
+                {
+                    cycle = "Yes";
+                    break;
+                }
+            }
+        }
+        cout << "Has Cycle: " << cycle << endl;
+    }
+
+    bool isCyclicDFS(int node, int parent, unordered_map<T, bool> &vis)
+    {
+        vis[node] = true;
+
+        for (int &nbr : adj[node])
+        {
+            if (!vis[nbr])
+            {
+                if (isCyclicDFS(nbr, node, vis))
+                    return true;
+            }
+            else if (nbr != parent)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    void detect_cycle_dfs()
+    {
+        unordered_map<T, bool> vis;
+        string cycle = "No";
+        for (T i = 0; i < V; i++)
+        {
+            if (!vis[i])
+            {
+                if (isCyclicDFS(i, i, vis))
+                {
+                    cycle = "Yes";
+                    break;
+                }
+            }
+        }
+        cout << "Has Cycle (DFS): " << cycle << endl;
+    }
 };
 
 int main()
 {
-
     int n;
     cout << "Enter the number of nodes : " << endl;
     cin >> n;
@@ -127,6 +208,7 @@ int main()
     cin >> m;
 
     Graph<int> g(n, m);
+    cout << "Enter the edges pairs: " << endl;
 
     for (int i = 0; i < m; i++)
     {
@@ -143,6 +225,8 @@ int main()
     cout << endl;
     cout << "DFS Traversal ->" << endl;
     g.dfs();
+    g.detect_cycle_bfs();
+    g.detect_cycle_dfs();
     cout << endl;
 
     /*
